@@ -3,6 +3,7 @@
 #include <iostream>
 #include "rand.h"
 #include "func.h"
+#include <stdlib.h>
 #define Trial 100
 #define EVO 100000
 #define cooling 1.0
@@ -23,24 +24,26 @@ y will be mutated by a second sample from the same generator.
 
 void Uniform_Mutation(double x, double y, double &mutated_x, double &mutated_y) {
 
-
+	cout << "Uniform" << endl;
 }
 
 void Normal_Mutation(double x, double y, double &mutated_x, double &mutated_y) {
 
-
+	cout << "Normal" << endl;
 }
 
 void Cauchy_Mutation(double x, double y, double &mutated_x, double &mutated_y) {
-
+	cout << "Cauchy" << endl;
 
 }
 void Mutation_Selector(int choice, double x, double y, double &mutated_x, double &mutated_y) {
 
+	cout << "chjoice: " << choice << endl;
 	switch (choice) {
 
 		case 0:
 			Uniform_Mutation(x, y, mutated_x, mutated_y); 
+			cout << "123" << endl;
 		break;
 
 		case 1:
@@ -67,7 +70,8 @@ bool accept(double newf, double f, double temp)
 	return (newf>=f) || (randUnit()<exp((newf-f)/temp));
 }
 
-int main() {
+int main(int argc, char* argv[]) {
+
 	double x, y, fitness; 
 
 	double best_x, best_y, best_fitness;
@@ -76,11 +80,19 @@ int main() {
 
 	int epoch, epochImproves, numEvalsIsInEpoch;
 	int choice;
-	
+
 	double rate;
 	double temp;
 
-	
+	if (argc != 4) {
+		cout << "Error! need 2 arguments for this program. " << endl;
+		return 0;
+	}
+
+	else {
+		choice = atoi(argv[1]);
+	}
+	cout << choice << endl;
 
 	initRand();
 
@@ -90,8 +102,10 @@ int main() {
 		best_x = x;
 
 		for (int j = 0; j < EVO; j++) {
+
 			epochImproves = 0;
 			for (int i = 0; i < epoch; i++) {
+
 				Mutation_Selector(choice, x, y, mutated_x, mutated_y);
 				mutated_Fitness = fr(mutated_x, mutated_y);
 				if (accept(mutated_Fitness, fitness, temp)) {
