@@ -5,8 +5,9 @@
 #include "func.h"
 #include <stdlib.h>
 #define Trial 100
-#define EVO 100000
-#define cooling 1.0
+#define Epoch 100
+#define EVA 100000
+
 
 using namespace std;
 
@@ -22,28 +23,68 @@ with this approach that this isn’t too frequent an event).
 y will be mutated by a second sample from the same generator.
 */
 
-void Uniform_Mutation(double x, double y, double &mutated_x, double &mutated_y) {
+void Uniform_Mutation(float x, float y, float &mutated_x, float &mutated_y) {
 
-	cout << "Uniform" << endl;
+	double val;
+	do {
+	val = randPMUnit() / 10;
+	mutated_x = x + (float)val;
+	} while (mutated_x < -100 || mutated_x > 100);
+
+	do {
+	val = randPMUnit() / 10;
+	//cout << "Val y: " << val << endl;
+	mutated_y = y + (float)val;
+	} while (mutated_y < -100 || mutated_y > 100);
+
+	if (mutated_x > 100)
+		cout << ">>>>" << endl;
+
+	if (mutated_x < -100)
+		cout << "<<<<" << endl;
+
+
+}	
+
+void Normal_Mutation(float x, float y, float &mutated_x, float &mutated_y) {
+
+	
+
+
+	
 }
 
-void Normal_Mutation(double x, double y, double &mutated_x, double &mutated_y) {
+void Cauchy_Mutation(float x, float y, float &mutated_x, float &mutated_y) {
+	
 
-	cout << "Normal" << endl;
+	double val;
+	do {
+	val = randCauchy(0, 0.1);
+	mutated_x = x + (float)val;
+	} while (mutated_x < -100 || mutated_x > 100);
+
+	do {
+	val = randCauchy(0, 0.1);
+	//cout << "Val y: " << val << endl;
+	mutated_y = y + (float)val;
+	} while (mutated_y < -100 || mutated_y > 100);
+
+	if (mutated_x > 100)
+		cout << ">>>>" << endl;
+
+	if (mutated_x < -100)
+		cout << "<<<<" << endl;
+
+
 }
+void Mutation_Selector(int choice, float x, float y, float &mutated_x, float &mutated_y) {
 
-void Cauchy_Mutation(double x, double y, double &mutated_x, double &mutated_y) {
-	cout << "Cauchy" << endl;
+	
 
-}
-void Mutation_Selector(int choice, double x, double y, double &mutated_x, double &mutated_y) {
-
-	cout << "chjoice: " << choice << endl;
 	switch (choice) {
 
 		case 0:
 			Uniform_Mutation(x, y, mutated_x, mutated_y); 
-			cout << "123" << endl;
 		break;
 
 		case 1:
@@ -65,74 +106,119 @@ void Mutation_Selector(int choice, double x, double y, double &mutated_x, double
 // newf -> Fitness of new point 
 // f -> current fitness
 // temp -> Temperature
-bool accept(double newf, double f, double temp)
+bool accept(float newf, float f, float temp)
 {
 	return (newf>=f) || (randUnit()<exp((newf-f)/temp));
 }
 
 int main(int argc, char* argv[]) {
 
-	double x, y, fitness; 
+	float x, y, fitness; 
 
-	double best_x, best_y, best_fitness;
+	float best_x, best_y, best_fitness = -100;
 
-	double mutated_x, mutated_y, mutated_Fitness;
+	float mutated_x, mutated_y, mutated_Fitness;
 
-	int epoch, epochImproves, numEvalsIsInEpoch;
+	int epochImproves, numEvalsIsInEpoch = 0;
 	int choice;
+	int best_location = 0;
+	int total_improve = 0;
 
-	double rate;
-	double temp;
+	float rate;
+	float temp, cooling;
+
+
 
 	if (argc != 4) {
-		cout << "Error! need 2 arguments for this program. " << endl;
-		return 0;
+		cout << "Error! need 3 arguments for this program. " << endl;
+		return -1;
 	}
 
 	else {
 		choice = atoi(argv[1]);
+		temp = (float)atof(argv[2]);
+		cooling = (float)atof(argv[3]);
+
+		if (choice < 0 || choice >2) {
+			cout << "Error! invalid mutation choice. " << endl;
+			return -1;
+		}
+		if (cooling < 0 || cooling > 1) {
+			cout << "Error! invalid cooling constant. " << endl;
+			return -1;
+		}
+
 	}
-	cout << choice << endl;
+	
 
 	initRand();
 
-	for (int i = 0; i < Trial; i++) {
+
+	//for (int i = 0; i < Trial; i++) {
 
 		x = randPMUnit() * 100;
-		best_x = x;
+		y = randPMUnit() * 100;
 
-		for (int j = 0; j < EVO; j++) {
+		cout << "X: " << x << endl << "Y: " << y << endl;
+		best_x = x;
+		best_y = y;
+
+		for (int j = 0; j < EVA; j++) {
 
 			epochImproves = 0;
-			for (int i = 0; i < epoch; i++) {
+			numEvalsIsInEpoch = 0;
+			for (int i = 0; i < Epoch; i++) {
 
+
+				numEvalsIsInEpoch++;
 				Mutation_Selector(choice, x, y, mutated_x, mutated_y);
+				fitness = fr(x, y);
 				mutated_Fitness = fr(mutated_x, mutated_y);
 				if (accept(mutated_Fitness, fitness, temp)) {
 					epochImproves++;
+					total_improve++;
 
 					x = mutated_x;
 					y = mutated_y;
 					fitness = mutated_Fitness;
 
+					//cout << "Fitness: " << fitness << endl;
+
 					if (fitness > best_fitness) {
 						best_x = x; 
 						best_y = y;
+						best_fitness = fitness;
+						best_location = j;
 					}
 				}
 			}
-			rate = epochImproves/numEvalsIsInEpoch;
-			if (cooling < 1) {
-				if (rate > 0.9)
-					temp *= cooling;
-				if (rate < 0.1)
-					temp /= cooling;
 
+
+			//cout << "Temp: " << temp << endl;
+			rate = (float)epochImproves/(float)numEvalsIsInEpoch;
+			//cout << "Rate: " << rate << endl;
+
+
+			if (cooling < 1) {
+
+				if (EVA % 200 == 0) {
+					// cooler
+					if (rate > 0.9)
+						temp *= cooling;
+					// hotter
+					if (rate < 0.1)
+						temp /= cooling;
+				}
 			}
 
 		}
+		// cout << "Accept times: " << epochImproves << endl;
 		// report results.
-	}
+	//}
+
+		cout << best_location << " " << total_improve << " " 
+		     << best_x << " " << best_y << " " << best_fitness 
+		     << endl;
 	
 
 	return 0;
