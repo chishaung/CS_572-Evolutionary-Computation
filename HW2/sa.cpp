@@ -5,7 +5,7 @@
 #include "func.h"
 #include <stdlib.h>
 #define Trial 100
-#define Epoch 100
+#define Epoch 10
 #define EVA 100000
 
 
@@ -49,7 +49,28 @@ void Uniform_Mutation(float x, float y, float &mutated_x, float &mutated_y) {
 void Normal_Mutation(float x, float y, float &mutated_x, float &mutated_y) {
 
 	
+	
 
+	double val;
+	do {
+	val = randNorm(0.1);
+	mutated_x = x + (float)val;
+	} while (mutated_x < -100 || mutated_x > 100);
+
+	do {
+	val = randNorm(0.1);
+	//cout << "Val y: " << val << endl;
+	mutated_y = y + (float)val;
+	} while (mutated_y < -100 || mutated_y > 100);
+
+	if (mutated_x > 100)
+		cout << ">>>>" << endl;
+
+	if (mutated_x < -100)
+		cout << "<<<<" << endl;
+
+
+	//cout << "Val: " << val << endl;
 
 	
 }
@@ -154,7 +175,7 @@ int main(int argc, char* argv[]) {
 	initRand();
 
 
-	//for (int i = 0; i < Trial; i++) {
+	for (int i = 0; i < Trial; i++) {
 
 		x = randPMUnit() * 100;
 		y = randPMUnit() * 100;
@@ -219,7 +240,7 @@ int main(int argc, char* argv[]) {
 		cout << best_location << " " << total_improve << " " 
 		     << best_x << " " << best_y << " " << best_fitness 
 		     << endl;
-	
+	}
 
 	return 0;
 }
