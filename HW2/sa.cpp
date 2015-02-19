@@ -13,16 +13,6 @@ using namespace std;
 
 
 
-/*
-x is mutated by adding a sample from the uniform 
-random number generator with in the range [−0.1, 0.1]
-
-If the new x is outside the acceptable range for x 
-then another random number is drawn (generally one must be careful 
-with this approach that this isn’t too frequent an event). 
-y will be mutated by a second sample from the same generator.
-*/
-
 void Uniform_Mutation(float x, float y, float &mutated_x, float &mutated_y) {
 
 	double val;
@@ -233,9 +223,7 @@ int main(int argc, char* argv[]) {
 			}
 
 		}
-		// cout << "Accept times: " << epochImproves << endl;
-		// report results.
-	//}
+
 
 		cout << best_location << " " << total_improve << " " 
 		     << best_x << " " << best_y << " " << best_fitness 
