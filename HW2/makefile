@@ -5,7 +5,7 @@ run: sa
 	./sa 0 100 0.9
 
 tar:
-	tar -cvf pas2.tar sa.cpp rand.cpp func.cpp rand.h func.h makefile
+	tar -cvf pas2.tar sa.cpp rand.cpp func.cpp rand.h func.h ChihsiangWang.pdf makefile
 
 rm:
 	rm z?

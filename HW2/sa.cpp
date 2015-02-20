@@ -138,6 +138,8 @@ int main(int argc, char* argv[]) {
 
 	float rate;
 	float temp, cooling;
+	int tries = 0;
+	int j = 0;
 
 
 
@@ -170,25 +172,31 @@ int main(int argc, char* argv[]) {
 
 		x = randPMUnit() * 100;
 		y = randPMUnit() * 100;
+		total_improve = 0;
+		j = 0;
+		//cout << "X: " << x << endl << "Y: " << y << endl;
+		//best_x = x;
+		//best_y = y;
 
-		cout << "X: " << x << endl << "Y: " << y << endl;
-		best_x = x;
-		best_y = y;
-
-		for (int j = 0; j < EVA; j++) {
+		while (tries < EVA) {
 
 			epochImproves = 0;
 			numEvalsIsInEpoch = 0;
+
+
+			//j++;
 			for (int i = 0; i < Epoch; i++) {
-
-
+				
+				tries++;
 				numEvalsIsInEpoch++;
 				Mutation_Selector(choice, x, y, mutated_x, mutated_y);
 				fitness = fr(x, y);
 				mutated_Fitness = fr(mutated_x, mutated_y);
+
 				if (accept(mutated_Fitness, fitness, temp)) {
 					epochImproves++;
 					total_improve++;
+					j++;
 
 					x = mutated_x;
 					y = mutated_y;
@@ -203,6 +211,8 @@ int main(int argc, char* argv[]) {
 						best_location = j;
 					}
 				}
+
+
 			}
 
 
@@ -213,7 +223,7 @@ int main(int argc, char* argv[]) {
 
 			if (cooling < 1) {
 
-				if (EVA % 200 == 0) {
+				if (tries % 200 == 0) {
 					// cooler
 					if (rate > 0.9)
 						temp *= cooling;
@@ -222,13 +232,15 @@ int main(int argc, char* argv[]) {
 						temp /= cooling;
 				}
 			}
-
+			
 		}
-
+		
+		tries = 0;
 
 		cout << best_location << " " << total_improve << " " 
 		     << best_x << " " << best_y << " " << best_fitness 
 		     << endl;
+		     
 	}
 
 	return 0;
