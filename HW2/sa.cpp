@@ -5,7 +5,7 @@
 #include "func.h"
 #include <stdlib.h>
 #define Trial 100
-#define Epoch 10
+#define Epoch 200
 #define EVA 100000
 
 

@@ -1,0 +1,3 @@
+ERROR(KSAT::read): k=3 but the number of variables in clause 2 is 2
+3 11001
+Satisfiable
