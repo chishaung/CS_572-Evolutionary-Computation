@@ -1,0 +1,18 @@
+GP Algorithm:
+
+Generate Population -> Generate N random trees, N is the POP_SIZE:
+Fill up its Fitness -> Calculate with F*(x) by given X, then Sum up given F(x) - F*(x)^2
+
+randomly use Reproduction, Xover, Mutation the tree for each individuals. 
+Note: Xover generate 2 individuals, others 1.
+
+siez_of_tree * 0.1 put into fitness -> punishment 
+
+
+Question: 
+1. Tree Depth --- Can we know the Equation?
+2. For each individuals, do one of changes? 
+3. How to implement Reproduction?
+4. Double check the Xover and Mutation 
+5. How to Select individuals?
+6. What does initOps(10) exactly do?
